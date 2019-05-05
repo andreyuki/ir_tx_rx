@@ -13,6 +13,8 @@
 #include "send_command.h"
 #include "rmt_structs.h"
 
+static const char *TAG = "sent_com_events";
+
 SemaphoreHandle_t xSemaphoreTX = NULL;
 
 // Inicialização do canal de TX
@@ -55,16 +57,14 @@ static void rmt_tx_task(void* parameter) {
 
 	rmt_items* items_to_send = (rmt_items*) parameter;
 
-	printf( "Tx buffer has %i items\n", items_to_send->number_of_items );
+	ESP_LOGI(TAG, "Tx buffer has %i items\n", items_to_send->number_of_items );
 	for ( i=0; i<items_to_send->number_of_items; i++ ) {
-		if ( i>0 ) { printf(","); }
-		printf( "%i", dur( items_to_send->items[i].level0, items_to_send->items[i].duration0 ) );
-		printf(",%i", dur( items_to_send->items[i].level1, items_to_send->items[i].duration1 ) );
+		ESP_LOGI(TAG, "%d: %i, %i", dur(items_to_send->items[i].level0, items_to_send->items[i].duration0), dur(items_to_send->items[i].level1, items_to_send->items[i].duration1));
 	}
-	printf("\n");
+
 
 	rmt_write_items(RMT_TX_CHANNEL, items_to_send->items, items_to_send->number_of_items, 1);
-	printf( "Signal sent %i items\n", items_to_send->number_of_items );
+	ESP_LOGI(TAG, "Signal sent %i items\n", items_to_send->number_of_items );
 
 
 	xSemaphoreGive(xSemaphoreTX);

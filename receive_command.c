@@ -63,11 +63,8 @@ static void rx_debug_task() {
 			// print the RMT received durations to the monitor
 			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
 			for ( i=0; i<rx_size/4; i++ ) {
-				if ( i>0 ) { printf(","); }
-				printf( "%i", dur( items[i].level0, items[i].duration0 ) );
-				printf(",%i", dur( items[i].level1, items[i].duration1 ) );
+				ESP_LOGI(TAG, "%d: %i, %i", dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
 			}
-			printf("\n");
 
 			// free up data space
 			vRingbufferReturnItem(rx_rb, (void*) items);
@@ -109,13 +106,10 @@ static void rmt_rx_receive_command(void* parameter) {
 				items_to_record[i].duration1 = items[i].duration1;
 			}
 
-			printf( "Received %i items\n", rx_size/4 );
+			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
 			for ( i=0; i<rx_size/4; i++ ) {
-				if ( i>0 ) { printf(","); }
-				printf( "%i", dur( items[i].level0, items[i].duration0 ) );
-				printf(",%i", dur( items[i].level1, items[i].duration1 ) );
+				ESP_LOGI(TAG, "%d: %i, %i", dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
 			}
-			printf("\n");
 
 			memcpy (command->rmt.items, items_to_record, rx_size);
 			command->rmt.number_of_items = rx_size/4;
@@ -146,17 +140,14 @@ commands receive_commands(char* brand, char* model, char* func) {
 
 	xEventGroupWaitBits(xEventGroup, BIT0, pdFALSE, pdFALSE, portMAX_DELAY);
 
-	printf("BRAND: %s\n", command.brand);
-	printf("MODEL: %s\n", command.model);
-	printf("FUNC: %s\n", command.func);
+	ESP_LOGI(TAG,"BRAND: %s\n", command.brand);
+	ESP_LOGI(TAG,"MODEL: %s\n", command.model);
+	ESP_LOGI(TAG,"FUNC: %s\n", command.func);
 
-	printf( "Recorded %i items\n", command.rmt.number_of_items );
+	ESP_LOGI(TAG, "Recorded %i items\n", command.rmt.number_of_items );
 	for (int i=0; i<command.rmt.number_of_items; i++ ) {
-		if ( i>0 ) { printf(","); }
-		printf( "%i", dur( command.rmt.items[i].level0, command.rmt.items[i].duration0 ) );
-		printf(",%i", dur( command.rmt.items[i].level1, command.rmt.items[i].duration1 ) );
+		ESP_LOGI(TAG, "%d: %i %i", dur(command.rmt.items[i].level0, command.rmt.items[i].duration0), dur(command.rmt.items[i].level1, command.rmt.items[i].duration1 ));
 	}
-	printf("\nGRAVADO\n");
 
 	return command;
 
