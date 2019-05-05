@@ -59,7 +59,7 @@ static void rmt_tx_task(void* parameter) {
 
 	ESP_LOGI(TAG, "Tx buffer has %i items\n", items_to_send->number_of_items );
 	for ( i=0; i<items_to_send->number_of_items; i++ ) {
-		ESP_LOGI(TAG, "%d: %i, %i", dur(items_to_send->items[i].level0, items_to_send->items[i].duration0), dur(items_to_send->items[i].level1, items_to_send->items[i].duration1));
+		ESP_LOGI(TAG, "%d: %i, %i", i, dur(items_to_send->items[i].level0, items_to_send->items[i].duration0), dur(items_to_send->items[i].level1, items_to_send->items[i].duration1));
 	}
 
 

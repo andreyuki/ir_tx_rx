@@ -63,7 +63,7 @@ static void rx_debug_task() {
 			// print the RMT received durations to the monitor
 			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
 			for ( i=0; i<rx_size/4; i++ ) {
-				ESP_LOGI(TAG, "%d: %i, %i", dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
+				ESP_LOGI(TAG, "%d: %i, %i", i, dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
 			}
 
 			// free up data space
@@ -108,7 +108,7 @@ static void rmt_rx_receive_command(void* parameter) {
 
 			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
 			for ( i=0; i<rx_size/4; i++ ) {
-				ESP_LOGI(TAG, "%d: %i, %i", dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
+				ESP_LOGI(TAG, "%d: %i, %i", i, dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
 			}
 
 			memcpy (command->rmt.items, items_to_record, rx_size);
@@ -132,21 +132,21 @@ commands receive_commands(char* brand, char* model, char* func) {
 
 	xEventGroup = xEventGroupCreate();
 
-	snprintf(command.brand, COMMAND_STRUCT_STRING_LENGTH, "%s\n", brand);
-	snprintf(command.model, COMMAND_STRUCT_STRING_LENGTH, "%s\n",  model);
-	snprintf(command.func, COMMAND_STRUCT_STRING_LENGTH, "%s\n", func);
+	snprintf(command.brand, COMMAND_STRUCT_STRING_LENGTH, "%s", brand);
+	snprintf(command.model, COMMAND_STRUCT_STRING_LENGTH, "%s",  model);
+	snprintf(command.func, COMMAND_STRUCT_STRING_LENGTH, "%s", func);
 
 	xTaskCreate(rmt_rx_receive_command, "rmt_rx_receive_command", 2048, (void*)&command, 10, NULL);
 
 	xEventGroupWaitBits(xEventGroup, BIT0, pdFALSE, pdFALSE, portMAX_DELAY);
 
-	ESP_LOGI(TAG,"BRAND: %s\n", command.brand);
-	ESP_LOGI(TAG,"MODEL: %s\n", command.model);
-	ESP_LOGI(TAG,"FUNC: %s\n", command.func);
+	ESP_LOGI(TAG,"BRAND: %s", command.brand);
+	ESP_LOGI(TAG,"MODEL: %s", command.model);
+	ESP_LOGI(TAG,"FUNC: %s", command.func);
 
 	ESP_LOGI(TAG, "Recorded %i items\n", command.rmt.number_of_items );
 	for (int i=0; i<command.rmt.number_of_items; i++ ) {
-		ESP_LOGI(TAG, "%d: %i %i", dur(command.rmt.items[i].level0, command.rmt.items[i].duration0), dur(command.rmt.items[i].level1, command.rmt.items[i].duration1 ));
+		ESP_LOGI(TAG, "%d: %i %i", i, dur(command.rmt.items[i].level0, command.rmt.items[i].duration0), dur(command.rmt.items[i].level1, command.rmt.items[i].duration1 ));
 	}
 
 	return command;
