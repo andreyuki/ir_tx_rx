@@ -14,21 +14,14 @@
 #include "rmt_structs.h"
 #include <unistd.h>
 
+static const char *TAG = "receive_com_events";
+
+EventGroupHandle_t xEventGroup;
+
 // Inicialização do canal de RX
 void rx_channels_init(rmt_channel_t rmt_rx_channel, int rx_gpio, int rx_mem_block_num) {
-    rmt_config_t rmt_rx_config;
 
-//	int clk_div;
-//	rmt_source_clk_t* src_clk = NULL;
-//
-//	rmt_get_source_clk(rmt_rx_channel, src_clk);
-//
-//	clk_div = (int)src_clk / res;
-
-//	printf("SOURCE: %d\n", (int)src_clk);
-//	printf("RES: %d\n", res);
-//	printf("CLK_DIV: %d\n", clk_div);
-
+	rmt_config_t rmt_rx_config;
 
 	rmt_rx_config.rmt_mode      = RMT_MODE_RX;
 	rmt_rx_config.channel       = rmt_rx_channel;
@@ -68,7 +61,7 @@ static void rx_debug_task() {
 		if(items) {
 
 			// print the RMT received durations to the monitor
-			printf( "  Received %i items\n", rx_size/4 );
+			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
 			for ( i=0; i<rx_size/4; i++ ) {
 				if ( i>0 ) { printf(","); }
 				printf( "%i", dur( items[i].level0, items[i].duration0 ) );
@@ -129,7 +122,8 @@ static void rmt_rx_receive_command(void* parameter) {
 
 			// free up data space
 			vRingbufferReturnItem(rb, (void*) items);
-			xTaskCreate(rx_debug_task, "rx_debug_task", 2048, NULL, 10, NULL);
+			xEventGroupSetBits(xEventGroup, BIT0);
+			//xTaskCreate(rx_debug_task, "rx_debug_task", 2048, NULL, 10, NULL);
 			break;
 		}
 		vTaskDelay( 100 / portTICK_PERIOD_MS );
@@ -142,13 +136,15 @@ static void rmt_rx_receive_command(void* parameter) {
 commands receive_commands(char* brand, char* model, char* func) {
 	commands command;
 
-	snprintf(command.brand, COMMAND_STRUCT_STRING_LENGTH, "%s", brand);
-	snprintf(command.model, COMMAND_STRUCT_STRING_LENGTH, "%s",  model);
-	snprintf(command.func, COMMAND_STRUCT_STRING_LENGTH, "%s", func);
+	xEventGroup = xEventGroupCreate();
+
+	snprintf(command.brand, COMMAND_STRUCT_STRING_LENGTH, "%s\n", brand);
+	snprintf(command.model, COMMAND_STRUCT_STRING_LENGTH, "%s\n",  model);
+	snprintf(command.func, COMMAND_STRUCT_STRING_LENGTH, "%s\n", func);
 
 	xTaskCreate(rmt_rx_receive_command, "rmt_rx_receive_command", 2048, (void*)&command, 10, NULL);
 
-	sleep(5);
+	xEventGroupWaitBits(xEventGroup, BIT0, pdFALSE, pdFALSE, portMAX_DELAY);
 
 	printf("BRAND: %s\n", command.brand);
 	printf("MODEL: %s\n", command.model);

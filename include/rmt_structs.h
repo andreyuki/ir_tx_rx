@@ -10,7 +10,7 @@
 
 #include "driver/rmt.h"
 
-#define COMMAND_STRUCT_STRING_LENGTH 30
+#define COMMAND_STRUCT_STRING_LENGTH 15
 
 typedef struct{
 	int number_of_items;
