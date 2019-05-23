@@ -106,10 +106,10 @@ static void rmt_rx_receive_command(void* parameter) {
 				items_to_record[i].duration1 = items[i].duration1;
 			}
 
-			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
-			for ( i=0; i<rx_size/4; i++ ) {
-				ESP_LOGI(TAG, "%d: %i, %i", i, dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
-			}
+//			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
+//			for ( i=0; i<rx_size/4; i++ ) {
+//				ESP_LOGI(TAG, "%d: %i, %i", i, dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
+//			}
 
 			memcpy (command->rmt.items, items_to_record, rx_size);
 			command->rmt.number_of_items = rx_size/4;
@@ -139,15 +139,6 @@ commands receive_commands(char* brand, char* model, char* func) {
 	xTaskCreate(rmt_rx_receive_command, "rmt_rx_receive_command", 2048, (void*)&command, 10, NULL);
 
 	xEventGroupWaitBits(xEventGroup, BIT0, pdFALSE, pdFALSE, portMAX_DELAY);
-
-	ESP_LOGI(TAG,"BRAND: %s", command.brand);
-	ESP_LOGI(TAG,"MODEL: %s", command.model);
-	ESP_LOGI(TAG,"FUNC: %s", command.func);
-
-	ESP_LOGI(TAG, "Recorded %i items\n", command.rmt.number_of_items );
-	for (int i=0; i<command.rmt.number_of_items; i++ ) {
-		ESP_LOGI(TAG, "%d: %i %i", i, dur(command.rmt.items[i].level0, command.rmt.items[i].duration0), dur(command.rmt.items[i].level1, command.rmt.items[i].duration1 ));
-	}
 
 	return command;
 

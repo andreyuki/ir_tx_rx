@@ -1,5 +1,8 @@
 # Componente IR TX RX
 
+Falar o que cada um faz, antigo readme
+Como funciona, como faz para usar esse submodule
+
 ## Informações gerais
 
 ### RMT
@@ -12,7 +15,7 @@ Para a recepçãod o infravermelho são utilizados: um led sensor de infravermel
 
 Para o envio do infravermelho são utilizados: 3 led emissor de infravermelho (TSAL7300), um transistor NPN (BC337-25), um resistor de 22 Ohm e um de 68 Ohm
 
-![Esquemático](./../../../../esquematico.png)
+![Esquemático](./../../esquematico.png)
 
 Os capacitores e resistores junto as sensor são utilizados para diminiur o ruído e o transistor junto aos emissores serve para aumentar a corrente nos emissores.
 
