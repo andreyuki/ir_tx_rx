@@ -106,11 +106,6 @@ static void rmt_rx_receive_command(void* parameter) {
 				items_to_record[i].duration1 = items[i].duration1;
 			}
 
-//			ESP_LOGI(TAG, "Received %i items\n", rx_size/4 );
-//			for ( i=0; i<rx_size/4; i++ ) {
-//				ESP_LOGI(TAG, "%d: %i, %i", i, dur(items[i].level0, items[i].duration0), dur(items[i].level1, items[i].duration1) );
-//			}
-
 			memcpy (command->rmt.items, items_to_record, rx_size);
 			command->rmt.number_of_items = rx_size/4;
 
@@ -126,7 +121,6 @@ static void rmt_rx_receive_command(void* parameter) {
     vTaskDelete(NULL);
 }
 
-//Função para receber comando, recebe como parâmetro informações do comando e retorna struct commands com as informações, items e quantidade de itens
 commands receive_commands(char* brand, char* model, char* func) {
 	commands command;
 
@@ -145,7 +139,7 @@ commands receive_commands(char* brand, char* model, char* func) {
 }
 
 /*
- *   Função que transforma o nível do RMT em positivo e negativo para melhor visualização
+ *   Transform RMT signal into positive and negative for better visualization
  */
 int dur( uint32_t level, uint32_t duration ) {
 	if ( level == 0 ) { return duration; }

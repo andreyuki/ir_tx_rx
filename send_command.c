@@ -21,14 +21,6 @@ SemaphoreHandle_t xSemaphoreTX = NULL;
 void tx_channels_init(rmt_channel_t rmt_tx_channel, int tx_gpio, int tx_mem_block_num) {
 	rmt_config_t rmt_tx_config;
 
-	//TODO: receber como parametro GPIO, MEM_BLOCK_NUM, RESOLUCAO para calcular o clk_div
-//	int clk_div;
-//	rmt_source_clk_t* src_clk = NULL;
-//
-//	rmt_get_source_clk(rmt_tx_channel, src_clk);
-//
-//	clk_div = (int)src_clk / res;
-
 	rmt_tx_config.rmt_mode = RMT_MODE_TX;
 	rmt_tx_config.channel = rmt_tx_channel;
 	rmt_tx_config.gpio_num = tx_gpio;
